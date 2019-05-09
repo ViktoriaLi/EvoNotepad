@@ -18,15 +18,31 @@ class NotepadViewController: UIViewController {
     @IBOutlet weak var notepadTableView: UITableView!
     @IBOutlet weak var notesSearchBar: UISearchBar!
     
-    var notes = [Note1]()
+    var notes = [Note]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         notepadTableView.delegate = self
         notepadTableView.dataSource = self
-        notes.append(Note1(text: "test", date: Date()))
+        //notes.append(Note1(text: "test", date: Date()))
+        getNotes()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        getNotes()
+    }
+    
+    func getNotes() {
+        if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+            if let notepad = try? context.fetch(Note.fetchRequest()) as? [Note] {
+                if notepad != nil{
+                    notes = notepad!
+                    notepadTableView.reloadData()
+                }
+            }
+        }
+    }
 
     let dateFormatter: DateFormatter = {
         let df = DateFormatter()
