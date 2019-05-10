@@ -9,21 +9,18 @@
 import UIKit
 import CoreData
 
-struct Note1 {
-    var text: String?
-    var date: Date?
-}
-
 class NotepadViewController: UIViewController {
     @IBOutlet weak var notepadTableView: UITableView!
     @IBOutlet weak var notesSearchBar: UISearchBar!
     
     var notes = [Note]()
+    var filteredNotes = [Note]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         notepadTableView.delegate = self
         notepadTableView.dataSource = self
+        notesSearchBar.delegate = self
         getNotes()
     }
 
@@ -37,6 +34,7 @@ class NotepadViewController: UIViewController {
             if let notepad = try? context.fetch(Note.fetchRequest()) as? [Note] {
                 if notepad != nil{
                     notes = notepad!
+                    filteredNotes = notepad!
                     notepadTableView.reloadData()
                 }
             }
@@ -60,12 +58,12 @@ class NotepadViewController: UIViewController {
 extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return notes.count
+        return filteredNotes.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let note = notes[indexPath.row]
+        let note = filteredNotes[indexPath.row]
         let cell = notepadTableView.dequeueReusableCell(withIdentifier: "noteCell", for: indexPath) as? NoteTableViewCell
         if let creationDate = note.date {
             cell?.noteDateLabel.text = dateFormatter.string(from: creationDate)
@@ -79,7 +77,7 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let controller = storyboard.instantiateViewController(withIdentifier: "showNoteID") as? ShowNoteViewController
     
-        controller?.selectedNote = notes[indexPath.row]
+        controller?.selectedNote = filteredNotes[indexPath.row]
         if controller != nil {
             self.navigationController?.pushViewController(controller!, animated: true)
         }
@@ -94,6 +92,7 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
 
             context.delete(notes[indexPath.row])
             notes.remove(at: indexPath.row)
+            filteredNotes.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
             notepadTableView.reloadData()
             try? context.save()
@@ -101,4 +100,13 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+}
+
+extension NotepadViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filteredNotes = searchText.isEmpty ? notes : notes.filter { (item: Note) -> Bool in
+            return item.text?.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
+        }
+        notepadTableView.reloadData()
+    }
 }
