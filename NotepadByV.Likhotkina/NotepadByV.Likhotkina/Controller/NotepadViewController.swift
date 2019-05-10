@@ -13,8 +13,20 @@ class NotepadViewController: UIViewController {
     @IBOutlet weak var notepadTableView: UITableView!
     @IBOutlet weak var notesSearchBar: UISearchBar!
     
-    var notes = [Note]()
+    
+    var fetchSize: Int = 8
+    
+    var notes = [Note]() {
+        didSet {
+            if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Note")
+                totalNotesCount = try? context.count(for: fetchRequest)
+            }
+        }
+    }
+    
     var filteredNotes = [Note]()
+    var totalNotesCount: Int? = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,22 +34,37 @@ class NotepadViewController: UIViewController {
         notepadTableView.dataSource = self
         notesSearchBar.delegate = self
         notesSearchBar.showsCancelButton = true
-        getNotes()
+
+        getNotes(startIndex: 0)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         notesSearchBar.showsCancelButton = false
-        getNotes()
+       
+        getNotes(startIndex: 0)
     }
     
-    func getNotes() {
+    func getNotes(startIndex: Int) {
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Note")
+        fetchRequest.fetchOffset = startIndex
+        fetchRequest.fetchLimit = fetchSize
         if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
-            if let notepad = try? context.fetch(Note.fetchRequest()) as? [Note] {
+
+            if let notepad = try? context.fetch(fetchRequest) as? [Note] {
                 if notepad != nil{
-                    notes = notepad!
-                    filteredNotes = notepad!
-                    notepadTableView.reloadData()
+                    if startIndex == 0 {
+                        notes = notepad!
+                        filteredNotes = notepad!
+                        
+                    }
+                    else {
+                        notes += notepad!
+                        filteredNotes += notepad!
+                        
+                    }
+                    //notepadTableView.reload
                 }
             }
         }
@@ -105,6 +132,26 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
+        if indexPath.row == filteredNotes.count - 1 {
+            if totalNotesCount! > filteredNotes.count {
+                
+                var indexPathsArray = [IndexPath]()
+                
+                for index in (indexPath.row + 1)..<indexPath.row + fetchSize{
+                    let indexPath = IndexPath(row: index, section: 0)
+                    indexPathsArray.append(indexPath)
+                    notepadTableView.beginUpdates()
+                    notepadTableView!.insertRows(at: indexPathsArray, with: .fade)
+                    notepadTableView.endUpdates()
+                    getNotes(startIndex: indexPath.row + 1)
+                    //totalNotesCount! += fetchSize
+                    notepadTableView.reloadData()
+                    notepadTableView.reloadRows(at: indexPathsArray, with: .fade)
+                }
+                
+            }
+        }
+        
         let note = filteredNotes[indexPath.row]
         let cell = notepadTableView.dequeueReusableCell(withIdentifier: "noteCell", for: indexPath) as? NoteTableViewCell
         var noteText = note.text
@@ -156,7 +203,8 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
                 self.filteredNotes.remove(at: indexPath.row)
                     tableView.deleteRows(at: [indexPath], with: .fade)
                 self.notepadTableView.reloadData()
-                    try? context.save()
+                //self.totalNotesCount! -= 1
+                try? context.save()
             }
         }
         deleteAction.backgroundColor = .red
@@ -181,6 +229,6 @@ extension NotepadViewController: UISearchBarDelegate {
         notesSearchBar.text = ""
         notesSearchBar.showsCancelButton = false
         notesSearchBar.endEditing(true)
-        getNotes()
+        getNotes(startIndex: 0)
     }
 }

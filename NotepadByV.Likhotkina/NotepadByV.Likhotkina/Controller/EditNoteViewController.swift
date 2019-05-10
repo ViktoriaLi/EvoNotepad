@@ -6,6 +6,7 @@
 //  Copyright © 2019 Viktoria. All rights reserved.
 //
 
+//add case if text removed
 import UIKit
 
 class EditNoteViewController: UIViewController {
