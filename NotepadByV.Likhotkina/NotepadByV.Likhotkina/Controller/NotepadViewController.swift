@@ -24,7 +24,6 @@ class NotepadViewController: UIViewController {
         super.viewDidLoad()
         notepadTableView.delegate = self
         notepadTableView.dataSource = self
-        //notes.append(Note1(text: "test", date: Date()))
         getNotes()
     }
 
@@ -54,8 +53,8 @@ class NotepadViewController: UIViewController {
         if let newVC = segue.destination as? AddNewNoteViewController {
             newVC.notesListVC = self
         }
-        
     }
+    
 }
 
 extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
@@ -75,4 +74,31 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
 
         return cell!
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let controller = storyboard.instantiateViewController(withIdentifier: "showNoteID") as? ShowNoteViewController
+    
+        controller?.selectedNote = notes[indexPath.row]
+        if controller != nil {
+            self.navigationController?.pushViewController(controller!, animated: true)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        
+        
+
+            
+         if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+
+            context.delete(notes[indexPath.row])
+            notes.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+            notepadTableView.reloadData()
+            try? context.save()
+
+        }
+    }
+    
 }
