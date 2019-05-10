@@ -107,10 +107,16 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
         
         let note = filteredNotes[indexPath.row]
         let cell = notepadTableView.dequeueReusableCell(withIdentifier: "noteCell", for: indexPath) as? NoteTableViewCell
+        var noteText = note.text
+        
+        if noteText != nil, noteText!.count > 100 {
+            noteText = String(noteText!.prefix(100))
+        }
+
         if let creationDate = note.date {
             cell?.noteDateLabel.text = dateFormatter.string(from: creationDate)
         }
-        cell?.noteTextLabel.text = note.text
+        cell?.noteTextLabel.text = noteText
 
         return cell!
     }
@@ -129,12 +135,15 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
 
          if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
 
-            context.delete(notes[indexPath.row])
-            notes.remove(at: indexPath.row)
-            filteredNotes.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
-            notepadTableView.reloadData()
-            try? context.save()
+            if editingStyle == .delete {
+                context.delete(notes[indexPath.row])
+                notes.remove(at: indexPath.row)
+                filteredNotes.remove(at: indexPath.row)
+                tableView.deleteRows(at: [indexPath], with: .fade)
+                notepadTableView.reloadData()
+                try? context.save()
+            }
+            
 
         }
     }

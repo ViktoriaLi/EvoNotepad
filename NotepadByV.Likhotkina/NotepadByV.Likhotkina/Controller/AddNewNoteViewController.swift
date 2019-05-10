@@ -20,13 +20,15 @@ class AddNewNoteViewController: UIViewController {
     
     
     @IBAction func saveButtonPressed(_ sender: UIBarButtonItem) {
-        if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
-            let newNote = Note(entity: Note.entity(), insertInto: context)
-            if newNoteTextView.text != nil {
+        if newNoteTextView.text != nil, newNoteTextView.text != "" {
+            if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+                let newNote = Note(entity: Note.entity(), insertInto: context)
+                
                 newNote.text = newNoteTextView.text
                 newNote.date = Date()
+                
+                try? context.save()
             }
-            try? context.save()
         }
         
         self.dismiss(animated: true, completion: nil)
