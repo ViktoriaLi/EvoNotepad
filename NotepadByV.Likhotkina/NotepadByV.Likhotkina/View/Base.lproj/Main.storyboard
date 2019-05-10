@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Stk-5I-QLN">
-                                <rect key="frame" x="0.0" y="120" width="414" height="616"/>
+                                <rect key="frame" x="0.0" y="120" width="414" height="572"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="noteCell" rowHeight="140" id="ahK-Gt-quD" customClass="NoteTableViewCell" customModule="NotepadByV_Likhotkina" customModuleProvider="target">
@@ -69,7 +69,7 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
-                            <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="SwV-Ps-Ogd">
+                            <searchBar contentMode="redraw" showsCancelButton="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SwV-Ps-Ogd">
                                 <rect key="frame" x="0.0" y="64" width="414" height="56"/>
                                 <textInputTraits key="textInputTraits"/>
                             </searchBar>
@@ -86,13 +86,18 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <toolbarItems/>
                     <navigationItem key="navigationItem" id="S91-IN-nnx">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="lWQ-34-ST4">
-                            <connections>
-                                <segue destination="mb3-hB-zpV" kind="presentation" id="lDk-zO-XgQ"/>
-                            </connections>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem systemItem="add" id="lWQ-34-ST4">
+                                <connections>
+                                    <segue destination="mb3-hB-zpV" kind="presentation" id="lDk-zO-XgQ"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Item" id="nmw-jb-KlC"/>
+                        </rightBarButtonItems>
                     </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="notepadTableView" destination="Stk-5I-QLN" id="Fdd-2N-DY9"/>
                         <outlet property="notesSearchBar" destination="SwV-Ps-Ogd" id="B72-WV-Uai"/>
@@ -152,7 +157,11 @@
                                 <rect key="frame" x="0.0" y="20" width="414" height="44"/>
                                 <items>
                                     <navigationItem title="Add new note" id="xcn-IO-GmO">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="zod-dv-Owm"/>
+                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="zod-dv-Owm">
+                                            <connections>
+                                                <action selector="cancelButtonPressed:" destination="mb3-hB-zpV" id="BBG-Yd-Ere"/>
+                                            </connections>
+                                        </barButtonItem>
                                         <barButtonItem key="rightBarButtonItem" systemItem="save" id="JMh-ej-WCP">
                                             <connections>
                                                 <action selector="saveButtonPressed:" destination="mb3-hB-zpV" id="xAo-Y2-oIj"/>

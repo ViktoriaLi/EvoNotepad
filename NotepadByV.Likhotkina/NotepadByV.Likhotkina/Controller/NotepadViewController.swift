@@ -21,11 +21,13 @@ class NotepadViewController: UIViewController {
         notepadTableView.delegate = self
         notepadTableView.dataSource = self
         notesSearchBar.delegate = self
+        notesSearchBar.showsCancelButton = true
         getNotes()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        notesSearchBar.showsCancelButton = false
         getNotes()
     }
     
@@ -84,10 +86,7 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        
-        
 
-            
          if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
 
             context.delete(notes[indexPath.row])
@@ -108,5 +107,16 @@ extension NotepadViewController: UISearchBarDelegate {
             return item.text?.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
         }
         notepadTableView.reloadData()
+    }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        notesSearchBar.showsCancelButton = true
+    }
+        
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        notesSearchBar.text = ""
+        notesSearchBar.showsCancelButton = false
+        notesSearchBar.endEditing(true)
+        getNotes()
     }
 }

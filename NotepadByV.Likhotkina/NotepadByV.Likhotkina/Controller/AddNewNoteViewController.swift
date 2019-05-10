@@ -20,12 +20,6 @@ class AddNewNoteViewController: UIViewController {
     
     
     @IBAction func saveButtonPressed(_ sender: UIBarButtonItem) {
-        /*if newNoteTextView.text != nil {
-            let newNote = Note1(text: newNoteTextView.text, date: Date())
-            notesListVC?.notes.append(newNote)
-            notesListVC?.notepadTableView.reloadData()
-        }
-        self.dismiss(animated: true, completion: nil)*/
         if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
             let newNote = Note(entity: Note.entity(), insertInto: context)
             if newNoteTextView.text != nil {
@@ -38,4 +32,7 @@ class AddNewNoteViewController: UIViewController {
         self.dismiss(animated: true, completion: nil)
     }
     
+    @IBAction func cancelButtonPressed(_ sender: UIBarButtonItem) {
+        self.dismiss(animated: true, completion: nil)
+    }
 }
