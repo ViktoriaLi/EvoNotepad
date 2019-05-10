@@ -19,7 +19,11 @@ class ShowNoteViewController: UIViewController {
         if selectedNote != nil {
             noteTextLabel.text = selectedNote!.text
         }
-        
+        self.navigationItem.setRightBarButton(UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareNote)), animated: true)
+    }
+    
+    @objc func shareNote() {
+        print("test")
     }
     
     @IBAction func returnToNotepadButton(_ sender: UIBarButtonItem) {

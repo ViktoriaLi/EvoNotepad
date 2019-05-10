@@ -131,23 +131,27 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-
-         if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
-
-            if editingStyle == .delete {
-                context.delete(notes[indexPath.row])
-                notes.remove(at: indexPath.row)
-                filteredNotes.remove(at: indexPath.row)
-                tableView.deleteRows(at: [indexPath], with: .fade)
-                notepadTableView.reloadData()
-                try? context.save()
-            }
-            
-
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        
+        let editAction = UITableViewRowAction(style: .normal, title: "Edit") { (rowAction, indexPath) in
+            print("edit")
         }
+        editAction.backgroundColor = .blue
+        
+        let deleteAction = UITableViewRowAction(style: .normal, title: "Delete") { (rowAction, indexPath) in
+            if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+                context.delete(self.notes[indexPath.row])
+                self.notes.remove(at: indexPath.row)
+                self.filteredNotes.remove(at: indexPath.row)
+                    tableView.deleteRows(at: [indexPath], with: .fade)
+                self.notepadTableView.reloadData()
+                    try? context.save()
+            }
+        }
+        deleteAction.backgroundColor = .red
+        
+        return [deleteAction, editAction]
     }
-    
 }
 
 extension NotepadViewController: UISearchBarDelegate {
