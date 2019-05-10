@@ -23,7 +23,6 @@ class AddNewNoteViewController: UIViewController {
         if newNoteTextView.text != nil, newNoteTextView.text != "" {
             if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
                 let newNote = Note(entity: Note.entity(), insertInto: context)
-                
                 newNote.text = newNoteTextView.text
                 newNote.date = Date()
                 

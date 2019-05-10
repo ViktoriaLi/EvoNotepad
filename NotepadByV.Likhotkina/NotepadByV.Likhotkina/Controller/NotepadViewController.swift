@@ -134,7 +134,18 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         
         let editAction = UITableViewRowAction(style: .normal, title: "Edit") { (rowAction, indexPath) in
-            print("edit")
+            if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+                
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let controller = storyboard.instantiateViewController(withIdentifier: "editNoteVC") as? EditNoteViewController
+
+            controller?.noteToEdit = self.filteredNotes[indexPath.row]
+            if controller != nil {
+                self.navigationController?.pushViewController(controller!, animated: true)
+            }
+                context.refresh(self.filteredNotes[indexPath.row], mergeChanges: true)
+                try? context.save()
+            }
         }
         editAction.backgroundColor = .blue
         

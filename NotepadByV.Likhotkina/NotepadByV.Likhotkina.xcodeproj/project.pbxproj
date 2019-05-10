@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		C148C91C2285663E0071FB92 /* ShowNoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C148C91B2285663E0071FB92 /* ShowNoteViewController.swift */; };
 		C148C91E228588810071FB92 /* SortingTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C148C91D228588810071FB92 /* SortingTypes.swift */; };
+		C148C9202285AA890071FB92 /* EditNoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C148C91F2285AA890071FB92 /* EditNoteViewController.swift */; };
 		C149E20B2284575000E4972F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C149E20A2284575000E4972F /* AppDelegate.swift */; };
 		C149E20D2284575000E4972F /* NotepadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C149E20C2284575000E4972F /* NotepadViewController.swift */; };
 		C149E2102284575000E4972F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C149E20E2284575000E4972F /* Main.storyboard */; };
@@ -22,6 +23,7 @@
 /* Begin PBXFileReference section */
 		C148C91B2285663E0071FB92 /* ShowNoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowNoteViewController.swift; sourceTree = "<group>"; };
 		C148C91D228588810071FB92 /* SortingTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortingTypes.swift; sourceTree = "<group>"; };
+		C148C91F2285AA890071FB92 /* EditNoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditNoteViewController.swift; sourceTree = "<group>"; };
 		C149E2072284575000E4972F /* NotepadByV.Likhotkina.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NotepadByV.Likhotkina.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C149E20A2284575000E4972F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C149E20C2284575000E4972F /* NotepadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotepadViewController.swift; sourceTree = "<group>"; };
@@ -99,6 +101,7 @@
 				C149E20C2284575000E4972F /* NotepadViewController.swift */,
 				C149E22C228494D500E4972F /* AddNewNoteViewController.swift */,
 				C148C91B2285663E0071FB92 /* ShowNoteViewController.swift */,
+				C148C91F2285AA890071FB92 /* EditNoteViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -176,6 +179,7 @@
 			files = (
 				C148C91E228588810071FB92 /* SortingTypes.swift in Sources */,
 				C149E20D2284575000E4972F /* NotepadViewController.swift in Sources */,
+				C148C9202285AA890071FB92 /* EditNoteViewController.swift in Sources */,
 				C149E2132284575000E4972F /* Notes.xcdatamodeld in Sources */,
 				C149E22D228494D500E4972F /* AddNewNoteViewController.swift in Sources */,
 				C149E20B2284575000E4972F /* AppDelegate.swift in Sources */,

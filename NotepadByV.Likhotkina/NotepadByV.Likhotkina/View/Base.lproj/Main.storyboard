@@ -111,6 +111,38 @@
             </objects>
             <point key="canvasLocation" x="1063.768115942029" y="720.6521739130435"/>
         </scene>
+        <!--Edit Note View Controller-->
+        <scene sceneID="12V-Bn-ad9">
+            <objects>
+                <viewController restorationIdentifier="editNoteVC" storyboardIdentifier="editNoteVC" id="0Ng-GZ-lBd" customClass="EditNoteViewController" customModule="NotepadByV_Likhotkina" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="e0a-Zo-Ygc">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="5f9-X3-ksa">
+                                <rect key="frame" x="0.0" y="20" width="414" height="716"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="5f9-X3-ksa" firstAttribute="leading" secondItem="BAn-tx-zcd" secondAttribute="leading" id="Lxa-Nv-QJ6"/>
+                            <constraint firstItem="BAn-tx-zcd" firstAttribute="trailing" secondItem="5f9-X3-ksa" secondAttribute="trailing" id="d6H-Ue-Kws"/>
+                            <constraint firstItem="5f9-X3-ksa" firstAttribute="top" secondItem="BAn-tx-zcd" secondAttribute="top" id="dQL-es-M4K"/>
+                            <constraint firstItem="BAn-tx-zcd" firstAttribute="bottom" secondItem="5f9-X3-ksa" secondAttribute="bottom" id="tX6-HO-jPa"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="BAn-tx-zcd"/>
+                    </view>
+                    <connections>
+                        <outlet property="editNoteTextView" destination="5f9-X3-ksa" id="yqc-MD-ezL"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5Os-19-jXk" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1893" y="1494"/>
+        </scene>
         <!--Show Note View Controller-->
         <scene sceneID="Gk2-Np-k8Y">
             <objects>
