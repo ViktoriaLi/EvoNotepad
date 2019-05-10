@@ -94,7 +94,11 @@
                                     <segue destination="mb3-hB-zpV" kind="presentation" id="lDk-zO-XgQ"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem title="Item" id="nmw-jb-KlC"/>
+                            <barButtonItem title="Sort" image="Icon-29" id="nmw-jb-KlC">
+                                <connections>
+                                    <action selector="sortButton:" destination="BYZ-38-t0r" id="Y6S-Zh-RUo"/>
+                                </connections>
+                            </barButtonItem>
                         </rightBarButtonItems>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
@@ -212,4 +216,7 @@
             <point key="canvasLocation" x="82.608695652173921" y="720.6521739130435"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Icon-29" width="24" height="24"/>
+    </resources>
 </document>

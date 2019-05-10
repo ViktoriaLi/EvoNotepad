@@ -55,6 +55,46 @@ class NotepadViewController: UIViewController {
         }
     }
     
+    @IBAction func sortButton(_ sender: UIBarButtonItem) {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        alert.addAction(UIAlertAction(title: "A-Z", style: .default, handler: { (UIAlertAction)
+            in
+            self.performSorting(sortType: .alphabetAscending)
+        }))
+        alert.addAction(UIAlertAction(title: "Z-A", style: .default, handler: { (UIAlertAction)
+            in
+            self.performSorting(sortType: .alphabetDescending)
+        }))
+        alert.addAction(UIAlertAction(title: "Newest", style: .default, handler: { (UIAlertAction)
+            in
+            self.performSorting(sortType: .newest)
+        }))
+        alert.addAction(UIAlertAction(title: "Oldest", style: .default, handler: { (UIAlertAction)
+            in
+            self.performSorting(sortType: .oldest)
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func performSorting(sortType: Sorting) {
+        switch sortType {
+            
+        case .alphabetAscending:
+            filteredNotes = filteredNotes.sorted{ $0.text! < $1.text! }
+            notepadTableView.reloadData()
+        case .alphabetDescending:
+            filteredNotes = filteredNotes.sorted{ $0.text! > $1.text! }
+            notepadTableView.reloadData()
+        case .newest:
+            filteredNotes = filteredNotes.sorted{ $0.date! < $1.date! }
+            notepadTableView.reloadData()
+        case .oldest:
+            filteredNotes = filteredNotes.sorted{ $0.date! > $1.date! }
+            notepadTableView.reloadData()
+        }
+    }
 }
 
 extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
