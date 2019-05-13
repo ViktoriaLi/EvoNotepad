@@ -206,28 +206,45 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         let deleteAction = UITableViewRowAction(style: .destructive, title: "Delete") { (rowAction, indexPath) in
-            if let context = NoteHandler.shared.context {
-                context.delete(self.notes[indexPath.row])
-                self.notes.remove(at: indexPath.row)
-                self.filteredNotes.remove(at: indexPath.row)
+            let alert = UIAlertController(title: "Delete note?", message: nil, preferredStyle: .alert)
+            
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (UIAlertAction)
+                in
+                if let context = NoteHandler.shared.context {
+                    context.delete(self.notes[indexPath.row])
+                    self.notes.remove(at: indexPath.row)
+                    self.filteredNotes.remove(at: indexPath.row)
                     tableView.deleteRows(at: [indexPath], with: .fade)
-                self.notepadTableView.reloadData()
-                NoteHandler.shared.totalNotesCount! -= 1
-                NoteHandler.shared.appDelegate?.saveContext()
-            }
+                    self.notepadTableView.reloadData()
+                    NoteHandler.shared.totalNotesCount! -= 1
+                    NoteHandler.shared.appDelegate?.saveContext()
+                }
+            }))
+            self.present(alert, animated: true, completion: nil)
+
         }
         
         return [deleteAction, editAction]
     }
     
+
+    
 }
 
 extension NotepadViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        /*while filteredNotes.count != NoteHandler.shared.totalNotesCount {
+            self.getNotes(startIndex: self.filteredNotes.count, count: self.fetchSize)
+            
+        }*/
+        
         filteredNotes = searchText.isEmpty ? notes : notes.filter { (item: Note) -> Bool in
             print("4")
             print(filteredNotes)
             ifSorted = true
+            self.spinnerFooter.stopAnimating()
+            self.notepadTableView.tableFooterView = UIView()
             return item.text?.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
             
         }
