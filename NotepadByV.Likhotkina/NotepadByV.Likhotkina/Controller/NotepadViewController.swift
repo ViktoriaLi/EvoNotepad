@@ -13,8 +13,9 @@ class NotepadViewController: UIViewController {
     @IBOutlet weak var notepadTableView: UITableView!
     @IBOutlet weak var notesSearchBar: UISearchBar!
     
-    
     var fetchSize: Int = 9
+    
+    let spinnerFooter = UIActivityIndicatorView.init(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
     
     var notes = [Note]() {
         didSet {
@@ -39,6 +40,11 @@ class NotepadViewController: UIViewController {
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Note")
             totalNotesCount = try? context.count(for: fetchRequest)
         }
+        
+        self.spinnerFooter.frame = CGRect(x: 0, y: 0, width: notepadTableView.bounds.width, height: 50)
+        self.spinnerFooter.startAnimating()
+        
+        self.notepadTableView.tableFooterView = self.spinnerFooter
         
         getNotes(startIndex: 0, count: fetchSize)
     }
@@ -88,6 +94,7 @@ class NotepadViewController: UIViewController {
     }
     
     @IBAction func sortButton(_ sender: UIBarButtonItem) {
+        searchBarCancelButtonClicked(notesSearchBar)
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
         alert.addAction(UIAlertAction(title: "A-Z", style: .default, handler: { (UIAlertAction)
@@ -197,6 +204,8 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row == filteredNotes.count - 1, totalNotesCount! > filteredNotes.count {
             getNotes(startIndex: indexPath.row + 1, count: fetchSize)
+        } else if indexPath.row == filteredNotes.count - 1, totalNotesCount! <= filteredNotes.count {
+            self.spinnerFooter.stopAnimating()
         }
     }
     
