@@ -14,10 +14,12 @@ class NotepadViewController: UIViewController {
     @IBOutlet weak var notesSearchBar: UISearchBar!
     
     var fetchSize: Int = 9
-    
+    var ifSorted: Bool = false
     let spinnerFooter = UIActivityIndicatorView.init(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
     
-    var notes = [Note]() {
+    var notes = [Note]()
+    
+    var filteredNotes = [Note]() {
         didSet {
             if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Note")
@@ -26,7 +28,6 @@ class NotepadViewController: UIViewController {
         }
     }
     
-    var filteredNotes = [Note]()
     var totalNotesCount: Int? = 0
     
     override func viewDidLoad() {
@@ -45,14 +46,12 @@ class NotepadViewController: UIViewController {
         self.spinnerFooter.startAnimating()
         
         self.notepadTableView.tableFooterView = self.spinnerFooter
-        
         getNotes(startIndex: 0, count: fetchSize)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         notesSearchBar.showsCancelButton = false
-       
         getNotes(startIndex: 0, count: fetchSize)
     }
     
@@ -94,7 +93,7 @@ class NotepadViewController: UIViewController {
     }
     
     @IBAction func sortButton(_ sender: UIBarButtonItem) {
-        searchBarCancelButtonClicked(notesSearchBar)
+        //searchBarCancelButtonClicked(notesSearchBar)
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
         alert.addAction(UIAlertAction(title: "A-Z", style: .default, handler: { (UIAlertAction)
@@ -133,6 +132,7 @@ class NotepadViewController: UIViewController {
             filteredNotes = filteredNotes.sorted{ $0.date! > $1.date! }
             notepadTableView.reloadData()
         }
+        ifSorted = true
     }
 }
 
@@ -146,6 +146,15 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
         
         let note = filteredNotes[indexPath.row]
         let cell = notepadTableView.dequeueReusableCell(withIdentifier: "noteCell", for: indexPath) as? NoteTableViewCell
+        
+        if ifSorted == false, indexPath.row == filteredNotes.count - 1, totalNotesCount! > filteredNotes.count {
+            getNotes(startIndex: indexPath.row + 1, count: fetchSize)
+        } else if ifSorted == false, indexPath.row == filteredNotes.count - 1, totalNotesCount! <= filteredNotes.count {
+            self.spinnerFooter.stopAnimating()
+            self.notepadTableView.tableFooterView = UIView()
+        }
+        
+        
         var noteText = note.text
         
         if noteText != nil, noteText!.count > 100 {
@@ -202,11 +211,7 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == filteredNotes.count - 1, totalNotesCount! > filteredNotes.count {
-            getNotes(startIndex: indexPath.row + 1, count: fetchSize)
-        } else if indexPath.row == filteredNotes.count - 1, totalNotesCount! <= filteredNotes.count {
-            self.spinnerFooter.stopAnimating()
-        }
+       
     }
     
 }
@@ -224,6 +229,7 @@ extension NotepadViewController: UISearchBarDelegate {
     }
         
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        ifSorted = false
         notesSearchBar.text = ""
         notesSearchBar.showsCancelButton = false
         notesSearchBar.endEditing(true)

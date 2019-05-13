@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 49;
+	objectVersion = 48;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A989D05C2289B1F900211116 /* NoteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A989D05B2289B1F900211116 /* NoteHandler.swift */; };
 		C148C91C2285663E0071FB92 /* ShowNoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C148C91B2285663E0071FB92 /* ShowNoteViewController.swift */; };
 		C148C91E228588810071FB92 /* SortingTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C148C91D228588810071FB92 /* SortingTypes.swift */; };
 		C148C9202285AA890071FB92 /* EditNoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C148C91F2285AA890071FB92 /* EditNoteViewController.swift */; };
@@ -21,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A989D05B2289B1F900211116 /* NoteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteHandler.swift; sourceTree = "<group>"; };
 		C148C91B2285663E0071FB92 /* ShowNoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowNoteViewController.swift; sourceTree = "<group>"; };
 		C148C91D228588810071FB92 /* SortingTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortingTypes.swift; sourceTree = "<group>"; };
 		C148C91F2285AA890071FB92 /* EditNoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditNoteViewController.swift; sourceTree = "<group>"; };
@@ -81,6 +83,7 @@
 			children = (
 				C149E2112284575000E4972F /* Notes.xcdatamodeld */,
 				C148C91D228588810071FB92 /* SortingTypes.swift */,
+				A989D05B2289B1F900211116 /* NoteHandler.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -138,11 +141,12 @@
 				TargetAttributes = {
 					C149E2062284575000E4972F = {
 						CreatedOnToolsVersion = 10.2.1;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
 			buildConfigurationList = C149E2022284575000E4972F /* Build configuration list for PBXProject "NotepadByV.Likhotkina" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -177,6 +181,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A989D05C2289B1F900211116 /* NoteHandler.swift in Sources */,
 				C148C91E228588810071FB92 /* SortingTypes.swift in Sources */,
 				C149E20D2284575000E4972F /* NotepadViewController.swift in Sources */,
 				C148C9202285AA890071FB92 /* EditNoteViewController.swift in Sources */,
@@ -333,10 +338,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = NotepadByV.Likhotkina/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Viktoria.NotepadByV-Likhotkina";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
@@ -351,10 +353,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = NotepadByV.Likhotkina/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Viktoria.NotepadByV-Likhotkina";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
