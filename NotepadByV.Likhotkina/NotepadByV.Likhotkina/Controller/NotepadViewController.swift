@@ -74,9 +74,16 @@ class NotepadViewController: UIViewController {
     }
 
     let dateFormatter: DateFormatter = {
-        let df = DateFormatter()
-        df.dateStyle = .medium
-        return df
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        return dateFormatter
+    }()
+    
+    let timeFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm"
+        
+        return dateFormatter
     }()
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -155,6 +162,7 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
 
         if let creationDate = note.date {
             cell?.noteDateLabel.text = dateFormatter.string(from: creationDate)
+            cell?.noteTimeLabel.text = timeFormatter.string(from: creationDate)
         }
         cell?.noteTextLabel.text = noteText
 
