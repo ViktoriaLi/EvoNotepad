@@ -14,7 +14,7 @@ class NotepadViewController: UIViewController {
     @IBOutlet weak var notesSearchBar: UISearchBar!
     
     
-    var fetchSize: Int = 8
+    var fetchSize: Int = 9
     
     var notes = [Note]() {
         didSet {
@@ -35,6 +35,11 @@ class NotepadViewController: UIViewController {
         notesSearchBar.delegate = self
         notesSearchBar.showsCancelButton = true
 
+        if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Note")
+            totalNotesCount = try? context.count(for: fetchRequest)
+        }
+        
         getNotes(startIndex: 0, count: fetchSize)
     }
 
@@ -48,22 +53,22 @@ class NotepadViewController: UIViewController {
     func getNotes(startIndex: Int, count: Int) {
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Note")
-        //fetchRequest.fetchOffset = startIndex
-        //fetchRequest.fetchLimit = count
+        fetchRequest.fetchOffset = startIndex
+        fetchRequest.fetchLimit = count
         if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
 
             if let notepad = try? context.fetch(fetchRequest) as? [Note] {
                 if notepad != nil{
-                    //if startIndex == 0 {
+                    if startIndex == 0 {
                         notes = notepad!
                         filteredNotes = notepad!
                         
-                    /*}
+                    }
                     else {
                         notes += notepad!
                         filteredNotes += notepad!
                         
-                    }*/
+                    }
                     notepadTableView.reloadData()
                 }
             }
@@ -174,47 +179,25 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
                 try? context.save()
             }
         }
-        editAction.backgroundColor = .blue
         
-        let deleteAction = UITableViewRowAction(style: .normal, title: "Delete") { (rowAction, indexPath) in
+        let deleteAction = UITableViewRowAction(style: .destructive, title: "Delete") { (rowAction, indexPath) in
             if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
                 context.delete(self.notes[indexPath.row])
                 self.notes.remove(at: indexPath.row)
                 self.filteredNotes.remove(at: indexPath.row)
                     tableView.deleteRows(at: [indexPath], with: .fade)
                 self.notepadTableView.reloadData()
-                //self.totalNotesCount! -= 1
                 try? context.save()
             }
         }
-        deleteAction.backgroundColor = .red
         
         return [deleteAction, editAction]
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        //print(totalNotesCount)
-        /*if indexPath.row == filteredNotes.count - 1, totalNotesCount! > indexPath.row {
-            var count = fetchSize
-            
-            if totalNotesCount! < filteredNotes.count + fetchSize {
-                count = totalNotesCount! - filteredNotes.count
-            }
-                var indexPathsArray = [IndexPath]()
-                
-                for index in (indexPath.row)..<indexPath.row + count{
-                    let indexPath = IndexPath(row: index, section: 0)
-                    indexPathsArray.append(indexPath)
-                    //notepadTableView.beginUpdates()
-                    //notepadTableView!.insertRows(at: indexPathsArray, with: .fade)
-                    //notepadTableView.endUpdates()
-                    getNotes(startIndex: indexPath.row + 1, count: count)
-                    //totalNotesCount! += fetchSize
-                    notepadTableView.reloadData()
-                    //notepadTableView.reloadRows(at: indexPathsArray, with: .fade)
-                
-            }
-        }*/
+        if indexPath.row == filteredNotes.count - 1, totalNotesCount! > filteredNotes.count {
+            getNotes(startIndex: indexPath.row + 1, count: fetchSize)
+        }
     }
     
 }

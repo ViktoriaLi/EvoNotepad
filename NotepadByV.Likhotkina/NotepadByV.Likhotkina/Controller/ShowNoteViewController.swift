@@ -26,10 +26,7 @@ class ShowNoteViewController: UIViewController {
         if selectedNote != nil {
             let textToShare = [noteTextLabel.text!]
             let activityViewController = UIActivityViewController(activityItems: textToShare, applicationActivities: nil)
-            activityViewController.popoverPresentationController?.sourceView = self.view
-            
-            //activityViewController.excludedActivityTypes = [ UIActivityType.airDrop, UIActivityType.postToFacebook ]
-            
+            activityViewController.popoverPresentationController?.sourceView = self.view 
             self.present(activityViewController, animated: true, completion: nil)
         }
     }
