@@ -16,6 +16,8 @@ class AddNewNoteViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //newNoteTextView.selectedTextRange = newNoteTextView.textRange(from: newNoteTextView.beginningOfDocument, to: newNoteTextView.beginningOfDocument)
+        //newNoteTextView.beginFloatingCursor(at: CGPoint(x: 0, y: 0))
     }
     
     
