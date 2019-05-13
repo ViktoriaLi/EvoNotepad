@@ -27,7 +27,7 @@ class EditNoteViewController: UIViewController {
     }
     
     @objc func saveNoteAfterEditing() {
-        if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+        if let context = NoteHandler.shared.context {
             noteToEdit?.text = editNoteTextView.text
             noteToEdit?.date = Date()
             try? context.save()

@@ -23,7 +23,7 @@ class AddNewNoteViewController: UIViewController {
     
     @IBAction func saveButtonPressed(_ sender: UIBarButtonItem) {
         if newNoteTextView.text != nil, newNoteTextView.text != "" {
-            if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+            if let context = NoteHandler.shared.context {
                 let newNote = Note(entity: Note.entity(), insertInto: context)
                 newNote.text = newNoteTextView.text
                 newNote.date = Date()

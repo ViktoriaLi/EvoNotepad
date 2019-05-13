@@ -7,8 +7,25 @@
 //
 
 import Foundation
+import CoreData
 
 class NoteHandler {
     static let shared = NoteHandler()
     
+    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Note")
+    var totalNotesCount: Int? = 0
+    
+    var appDelegate: AppDelegate? = nil {
+        didSet {
+            context = appDelegate?.persistentContainer.viewContext
+        }
+    }
+    
+    var context: NSManagedObjectContext? = nil {
+        didSet {
+            totalNotesCount = try! context?.count(for: fetchRequest)
+        }
+    }
+    
+ 
 }

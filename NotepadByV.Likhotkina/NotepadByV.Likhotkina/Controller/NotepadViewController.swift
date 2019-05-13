@@ -21,14 +21,12 @@ class NotepadViewController: UIViewController {
     
     var filteredNotes = [Note]() {
         didSet {
-            if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+            if let context = NoteHandler.shared.context {
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Note")
-                totalNotesCount = try? context.count(for: fetchRequest)
+                NoteHandler.shared.totalNotesCount = try? context.count(for: fetchRequest)
             }
         }
     }
-    
-    var totalNotesCount: Int? = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,16 +34,13 @@ class NotepadViewController: UIViewController {
         notepadTableView.dataSource = self
         notesSearchBar.delegate = self
         notesSearchBar.showsCancelButton = true
-
-        if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
-            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Note")
-            totalNotesCount = try? context.count(for: fetchRequest)
-        }
+        
+        NoteHandler.shared.appDelegate = (UIApplication.shared.delegate as! AppDelegate)
         
         self.spinnerFooter.frame = CGRect(x: 0, y: 0, width: notepadTableView.bounds.width, height: 50)
         self.spinnerFooter.startAnimating()
-        
         self.notepadTableView.tableFooterView = self.spinnerFooter
+        
         getNotes(startIndex: 0, count: fetchSize)
     }
 
@@ -60,19 +55,17 @@ class NotepadViewController: UIViewController {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Note")
         fetchRequest.fetchOffset = startIndex
         fetchRequest.fetchLimit = count
-        if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+        if let context = NoteHandler.shared.context {
 
             if let notepad = try? context.fetch(fetchRequest) as? [Note] {
-                if notepad != nil{
+                if notepad != nil {
                     if startIndex == 0 {
                         notes = notepad!
                         filteredNotes = notepad!
-                        
                     }
                     else {
                         notes += notepad!
                         filteredNotes += notepad!
-                        
                     }
                     notepadTableView.reloadData()
                 }
@@ -147,13 +140,12 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
         let note = filteredNotes[indexPath.row]
         let cell = notepadTableView.dequeueReusableCell(withIdentifier: "noteCell", for: indexPath) as? NoteTableViewCell
         
-        if ifSorted == false, indexPath.row == filteredNotes.count - 1, totalNotesCount! > filteredNotes.count {
+        if ifSorted == false, indexPath.row == filteredNotes.count - 1, NoteHandler.shared.totalNotesCount! > filteredNotes.count {
             getNotes(startIndex: indexPath.row + 1, count: fetchSize)
-        } else if ifSorted == false, indexPath.row == filteredNotes.count - 1, totalNotesCount! <= filteredNotes.count {
+        } else if ifSorted == false, indexPath.row == filteredNotes.count - 1, NoteHandler.shared.totalNotesCount! <= filteredNotes.count {
             self.spinnerFooter.stopAnimating()
             self.notepadTableView.tableFooterView = UIView()
         }
-        
         
         var noteText = note.text
         
@@ -182,7 +174,7 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         
         let editAction = UITableViewRowAction(style: .normal, title: "Edit") { (rowAction, indexPath) in
-            if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+            if let context = NoteHandler.shared.context {
                 
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let controller = storyboard.instantiateViewController(withIdentifier: "editNoteVC") as? EditNoteViewController
@@ -197,7 +189,7 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         let deleteAction = UITableViewRowAction(style: .destructive, title: "Delete") { (rowAction, indexPath) in
-            if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+            if let context = NoteHandler.shared.context {
                 context.delete(self.notes[indexPath.row])
                 self.notes.remove(at: indexPath.row)
                 self.filteredNotes.remove(at: indexPath.row)
@@ -208,10 +200,6 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         return [deleteAction, editAction]
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-       
     }
     
 }
