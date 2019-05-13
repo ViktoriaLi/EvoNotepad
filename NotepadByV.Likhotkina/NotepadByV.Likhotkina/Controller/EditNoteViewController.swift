@@ -27,12 +27,9 @@ class EditNoteViewController: UIViewController {
     }
     
     @objc func saveNoteAfterEditing() {
-        if let context = NoteHandler.shared.context {
-            noteToEdit?.text = editNoteTextView.text
-            noteToEdit?.date = Date()
-            try? context.save()
-        }
-        
+        noteToEdit?.text = editNoteTextView.text
+        noteToEdit?.date = Date()
+        NoteHandler.shared.appDelegate?.saveContext()
         self.navigationController?.popViewController(animated: false)
     }
 }

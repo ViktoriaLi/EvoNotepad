@@ -184,7 +184,7 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
                 self.navigationController?.pushViewController(controller!, animated: true)
             }
                 context.refresh(self.filteredNotes[indexPath.row], mergeChanges: true)
-                try? context.save()
+                NoteHandler.shared.appDelegate?.saveContext()
             }
         }
         
@@ -195,7 +195,7 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
                 self.filteredNotes.remove(at: indexPath.row)
                     tableView.deleteRows(at: [indexPath], with: .fade)
                 self.notepadTableView.reloadData()
-                try? context.save()
+                NoteHandler.shared.appDelegate?.saveContext()
             }
         }
         
