@@ -19,14 +19,14 @@ class NotepadViewController: UIViewController {
     
     var notes = [Note]()
     
-    var filteredNotes = [Note]() {
+    var filteredNotes = [Note]() /*{
         didSet {
             if let context = NoteHandler.shared.context {
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Note")
                 NoteHandler.shared.totalNotesCount = try? context.count(for: fetchRequest)
             }
         }
-    }
+    }*/
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,7 +34,6 @@ class NotepadViewController: UIViewController {
         notepadTableView.dataSource = self
         notesSearchBar.delegate = self
         notesSearchBar.showsCancelButton = true
-        
         NoteHandler.shared.appDelegate = (UIApplication.shared.delegate as! AppDelegate)
         
         self.spinnerFooter.frame = CGRect(x: 0, y: 0, width: notepadTableView.bounds.width, height: 50)
@@ -52,25 +51,28 @@ class NotepadViewController: UIViewController {
     
     func getNotes(startIndex: Int, count: Int) {
         
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Note")
-        fetchRequest.fetchOffset = startIndex
-        fetchRequest.fetchLimit = count
-        if let context = NoteHandler.shared.context {
-
-            if let notepad = try? context.fetch(fetchRequest) as? [Note] {
-                if notepad != nil {
-                    if startIndex == 0 {
-                        notes = notepad!
-                        filteredNotes = notepad!
+        if ifSorted == false {
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Note")
+            fetchRequest.fetchOffset = startIndex
+            fetchRequest.fetchLimit = count
+            if let context = NoteHandler.shared.context {
+                
+                if let notepad = try? context.fetch(fetchRequest) as? [Note] {
+                    if notepad != nil {
+                        if startIndex == 0 {
+                            notes = notepad!
+                            filteredNotes = notepad!
+                        }
+                        else {
+                            notes += notepad!
+                            filteredNotes += notepad!
+                        }
+                        notepadTableView.reloadData()
                     }
-                    else {
-                        notes += notepad!
-                        filteredNotes += notepad!
-                    }
-                    notepadTableView.reloadData()
                 }
             }
         }
+        
     }
 
     let dateFormatter: DateFormatter = {
@@ -98,6 +100,8 @@ class NotepadViewController: UIViewController {
         
         alert.addAction(UIAlertAction(title: "A-Z", style: .default, handler: { (UIAlertAction)
             in
+            print("1")
+            print(self.filteredNotes)
             self.performSorting(sortType: .alphabetAscending)
         }))
         alert.addAction(UIAlertAction(title: "Z-A", style: .default, handler: { (UIAlertAction)
@@ -121,7 +125,11 @@ class NotepadViewController: UIViewController {
             
         case .alphabetAscending:
             filteredNotes = filteredNotes.sorted{ $0.text! < $1.text! }
+            print("2")
+            print(filteredNotes)
             notepadTableView.reloadData()
+            print("3")
+            print(filteredNotes)
         case .alphabetDescending:
             filteredNotes = filteredNotes.sorted{ $0.text! > $1.text! }
             notepadTableView.reloadData()
@@ -132,9 +140,10 @@ class NotepadViewController: UIViewController {
             filteredNotes = filteredNotes.sorted{ $0.date! > $1.date! }
             notepadTableView.reloadData()
         }
-        ifSorted = true
     }
 }
+
+
 
 extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
     
@@ -203,6 +212,7 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
                 self.filteredNotes.remove(at: indexPath.row)
                     tableView.deleteRows(at: [indexPath], with: .fade)
                 self.notepadTableView.reloadData()
+                NoteHandler.shared.totalNotesCount! -= 1
                 NoteHandler.shared.appDelegate?.saveContext()
             }
         }
@@ -215,9 +225,15 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
 extension NotepadViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         filteredNotes = searchText.isEmpty ? notes : notes.filter { (item: Note) -> Bool in
+            print("4")
+            print(filteredNotes)
+            ifSorted = true
             return item.text?.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
+            
         }
         notepadTableView.reloadData()
+        print("5")
+        print(filteredNotes)
     }
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {

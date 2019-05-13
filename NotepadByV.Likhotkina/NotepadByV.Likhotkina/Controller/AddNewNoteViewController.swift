@@ -27,7 +27,9 @@ class AddNewNoteViewController: UIViewController {
                 let newNote = Note(entity: Note.entity(), insertInto: context)
                 newNote.text = newNoteTextView.text
                 newNote.date = Date()
+                 NoteHandler.shared.totalNotesCount! += 1
                 NoteHandler.shared.appDelegate?.saveContext()
+                
             }
         }
         
