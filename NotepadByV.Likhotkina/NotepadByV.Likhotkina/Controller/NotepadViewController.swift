@@ -220,7 +220,8 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
             alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (UIAlertAction)
                 in
                 if let context = NoteHandler.shared.context {
-                    context.delete(self.notes[indexPath.row])
+                    //context.delete(self.notes[indexPath.row])
+                    context.delete(self.filteredNotes[indexPath.row])
                     self.notes.remove(at: indexPath.row)
                     self.filteredNotes.remove(at: indexPath.row)
                     tableView.deleteRows(at: [indexPath], with: .fade)
@@ -238,6 +239,7 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
 extension NotepadViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText != "" {
+            filteredNotes = notes
             while filteredNotes.count != NoteHandler.shared.totalNotesCount {
                 self.getNotes(startIndex: self.filteredNotes.count)
             }
