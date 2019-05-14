@@ -12,6 +12,7 @@ import CoreData
 class NotepadViewController: UIViewController {
     @IBOutlet weak var notepadTableView: UITableView!
     @IBOutlet weak var notesSearchBar: UISearchBar!
+    @IBOutlet weak var emptyTableLabel: UILabel!
     
     var fetchSize: Int = 9
     var ifSorted: Bool = false
@@ -33,12 +34,21 @@ class NotepadViewController: UIViewController {
         notepadTableView.delegate = self
         notepadTableView.dataSource = self
         notesSearchBar.delegate = self
-        notesSearchBar.showsCancelButton = true
+        notesSearchBar.showsCancelButton = false
         NoteHandler.shared.appDelegate = (UIApplication.shared.delegate as! AppDelegate)
         
         self.spinnerFooter.frame = CGRect(x: 0, y: 0, width: notepadTableView.bounds.width, height: 50)
-        self.spinnerFooter.startAnimating()
+        if NoteHandler.shared.totalNotesCount! > fetchSize {
+            self.spinnerFooter.startAnimating()
+        }
+        if NoteHandler.shared.totalNotesCount == 0 {
+            emptyTableLabel.text = "No notes"
+            emptyTableLabel.isHidden = false
+        }
         self.notepadTableView.tableFooterView = self.spinnerFooter
+        
+        let searchBarStyle = notesSearchBar.value(forKey: "searchField") as? UITextField
+        searchBarStyle?.clearButtonMode = .never
         
         getNotes(startIndex: 0, count: fetchSize)
     }
@@ -193,13 +203,13 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
         let editAction = UITableViewRowAction(style: .normal, title: "Edit") { (rowAction, indexPath) in
             if let context = NoteHandler.shared.context {
                 
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let controller = storyboard.instantiateViewController(withIdentifier: "editNoteVC") as? EditNoteViewController
-
-            controller?.noteToEdit = self.filteredNotes[indexPath.row]
-            if controller != nil {
-                self.navigationController?.pushViewController(controller!, animated: true)
-            }
+                let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                let controller = storyboard.instantiateViewController(withIdentifier: "editNoteVC") as? EditNoteViewController
+                
+                controller?.noteToEdit = self.filteredNotes[indexPath.row]
+                if controller != nil {
+                    self.navigationController?.pushViewController(controller!, animated: true)
+                }
                 context.refresh(self.filteredNotes[indexPath.row], mergeChanges: true)
                 NoteHandler.shared.appDelegate?.saveContext()
             }
@@ -222,7 +232,7 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
                 }
             }))
             self.present(alert, animated: true, completion: nil)
-
+            
         }
         
         return [deleteAction, editAction]
@@ -234,10 +244,10 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
 
 extension NotepadViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        /*while filteredNotes.count != NoteHandler.shared.totalNotesCount {
+        while filteredNotes.count != NoteHandler.shared.totalNotesCount {
             self.getNotes(startIndex: self.filteredNotes.count, count: self.fetchSize)
             
-        }*/
+        }
         
         filteredNotes = searchText.isEmpty ? notes : notes.filter { (item: Note) -> Bool in
             print("4")
@@ -255,13 +265,36 @@ extension NotepadViewController: UISearchBarDelegate {
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         notesSearchBar.showsCancelButton = true
+        print("searchBarTextDidBeginEditing")
     }
+    
+    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+        print("searchBarShouldEndEditing")
+        return true
+    }
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        print("searchBarTextDidEndEditing")
+    }
+    
+    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        print("searchBarSearchButtonClicked")
+        /*if !shouldShowSearchResults {
+            shouldShowSearchResults = true
+            tblSearchResults.reloadData()
+        }
         
+        searchController.searchBar.resignFirstResponder()*/
+    }
+    
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        print("searchBarCancelButtonClicked")
         ifSorted = false
         notesSearchBar.text = ""
         notesSearchBar.showsCancelButton = false
         notesSearchBar.endEditing(true)
+        self.spinnerFooter.stopAnimating()
+        self.notepadTableView.tableFooterView = UIView()
         getNotes(startIndex: 0, count: fetchSize)
+        notesSearchBar.resignFirstResponder()
     }
 }

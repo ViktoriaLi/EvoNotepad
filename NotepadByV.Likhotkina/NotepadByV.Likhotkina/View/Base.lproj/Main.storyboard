@@ -11,7 +11,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Notepad View Controller-->
+        <!--Notes-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="NotepadViewController" customModule="NotepadByV_Likhotkina" customModuleProvider="target" sceneMemberID="viewController">
@@ -70,17 +70,25 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
-                            <searchBar contentMode="redraw" searchBarStyle="minimal" showsCancelButton="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SwV-Ps-Ogd">
+                            <searchBar contentMode="redraw" restorationIdentifier="searchField" searchBarStyle="minimal" placeholder="Search" showsCancelButton="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SwV-Ps-Ogd">
                                 <rect key="frame" x="0.0" y="64" width="414" height="56"/>
                                 <textInputTraits key="textInputTraits"/>
                             </searchBar>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Empty table" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DgP-zC-BFt">
+                                <rect key="frame" x="161" y="357" width="91.333333333333314" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="DgP-zC-BFt" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="Ek5-d1-WeD"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="SwV-Ps-Ogd" secondAttribute="trailing" id="Iat-Lf-GVo"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Stk-5I-QLN" secondAttribute="trailing" id="KWR-RV-MHe"/>
                             <constraint firstItem="SwV-Ps-Ogd" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="b5s-b6-m9w"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Stk-5I-QLN" secondAttribute="bottom" id="c7Y-IB-zAf"/>
+                            <constraint firstItem="DgP-zC-BFt" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="i9E-6p-Yox"/>
                             <constraint firstItem="Stk-5I-QLN" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="od3-xD-7f9"/>
                             <constraint firstItem="Stk-5I-QLN" firstAttribute="top" secondItem="SwV-Ps-Ogd" secondAttribute="bottom" id="yaY-Si-Bs5"/>
                             <constraint firstItem="SwV-Ps-Ogd" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="yx5-es-1tu"/>
@@ -88,7 +96,7 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" id="S91-IN-nnx">
+                    <navigationItem key="navigationItem" title="Notes" id="S91-IN-nnx">
                         <rightBarButtonItems>
                             <barButtonItem systemItem="add" id="lWQ-34-ST4">
                                 <connections>
@@ -104,6 +112,7 @@
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="emptyTableLabel" destination="DgP-zC-BFt" id="KEI-QX-WI3"/>
                         <outlet property="notepadTableView" destination="Stk-5I-QLN" id="Fdd-2N-DY9"/>
                         <outlet property="notesSearchBar" destination="SwV-Ps-Ogd" id="B72-WV-Uai"/>
                     </connections>
