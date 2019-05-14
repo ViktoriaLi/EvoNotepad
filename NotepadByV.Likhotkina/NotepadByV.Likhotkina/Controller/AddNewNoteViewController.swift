@@ -27,16 +27,14 @@ class AddNewNoteViewController: UIViewController {
                 let newNote = Note(entity: Note.entity(), insertInto: context)
                 newNote.text = newNoteTextView.text
                 newNote.date = Date()
-                 NoteHandler.shared.totalNotesCount! += 1
+                NoteHandler.shared.totalNotesCount! += 1
                 NoteHandler.shared.appDelegate?.saveContext()
-                
             }
         }
-        
-        self.dismiss(animated: true, completion: nil)
+        self.dismiss(animated: false, completion: nil)
     }
     
     @IBAction func cancelButtonPressed(_ sender: UIBarButtonItem) {
-        self.dismiss(animated: true, completion: nil)
+        self.dismiss(animated: false, completion: nil)
     }
 }

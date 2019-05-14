@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A926CE64228B114F001EA43B /* NotepadModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A926CE63228B114F001EA43B /* NotepadModel.swift */; };
 		A989D05C2289B1F900211116 /* NoteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A989D05B2289B1F900211116 /* NoteHandler.swift */; };
 		C148C91C2285663E0071FB92 /* ShowNoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C148C91B2285663E0071FB92 /* ShowNoteViewController.swift */; };
 		C148C91E228588810071FB92 /* SortingTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C148C91D228588810071FB92 /* SortingTypes.swift */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A926CE63228B114F001EA43B /* NotepadModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotepadModel.swift; sourceTree = "<group>"; };
 		A989D05B2289B1F900211116 /* NoteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteHandler.swift; sourceTree = "<group>"; };
 		C148C91B2285663E0071FB92 /* ShowNoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowNoteViewController.swift; sourceTree = "<group>"; };
 		C148C91D228588810071FB92 /* SortingTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortingTypes.swift; sourceTree = "<group>"; };
@@ -84,6 +86,7 @@
 				C149E2112284575000E4972F /* Notes.xcdatamodeld */,
 				C148C91D228588810071FB92 /* SortingTypes.swift */,
 				A989D05B2289B1F900211116 /* NoteHandler.swift */,
+				A926CE63228B114F001EA43B /* NotepadModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -190,6 +193,7 @@
 				C149E20B2284575000E4972F /* AppDelegate.swift in Sources */,
 				C149E22B22847CA900E4972F /* NoteTableViewCell.swift in Sources */,
 				C148C91C2285663E0071FB92 /* ShowNoteViewController.swift in Sources */,
+				A926CE64228B114F001EA43B /* NotepadModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

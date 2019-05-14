@@ -27,5 +27,5 @@ class NoteHandler {
         }
     }
     
- 
+    let fetchSize: Int = 9
 }

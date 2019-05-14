@@ -19,21 +19,18 @@ class ShowNoteViewController: UIViewController {
         super.viewDidLoad()
         if selectedNote != nil {
             noteTextLabel.text = selectedNote!.text
-            noteTextLabel.sizeToFit()
         }
         self.navigationItem.setRightBarButton(UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareNote)), animated: true)
     }
     
-    override func viewWillLayoutSubviews() {
-        noteTextLabel.sizeToFit()
-    }
-    
     @objc func shareNote() {
-        if selectedNote != nil {
-            let textToShare = [noteTextLabel.text!]
-            activityViewController = UIActivityViewController(activityItems: textToShare, applicationActivities: nil)
-            activityViewController?.popoverPresentationController?.sourceView = self.view
-            self.present(activityViewController!, animated: true, completion: nil)
+        DispatchQueue.main.async {
+            if self.selectedNote != nil {
+                let textToShare = [self.noteTextLabel.text!]
+                self.activityViewController = UIActivityViewController(activityItems: textToShare, applicationActivities: nil)
+                self.activityViewController?.popoverPresentationController?.sourceView = self.view
+                self.present(self.activityViewController!, animated: true, completion: nil)
+            }
         }
     }
     

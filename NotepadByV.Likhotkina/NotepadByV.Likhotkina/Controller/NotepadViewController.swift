@@ -14,7 +14,7 @@ class NotepadViewController: UIViewController {
     @IBOutlet weak var notesSearchBar: UISearchBar!
     @IBOutlet weak var emptyTableLabel: UILabel!
     
-    var fetchSize: Int = 9
+    
     var ifSorted: Bool = false
     let spinnerFooter = UIActivityIndicatorView.init(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
     
@@ -31,7 +31,7 @@ class NotepadViewController: UIViewController {
         NoteHandler.shared.appDelegate = (UIApplication.shared.delegate as! AppDelegate)
         
         self.spinnerFooter.frame = CGRect(x: 0, y: 0, width: notepadTableView.bounds.width, height: 50)
-        if NoteHandler.shared.totalNotesCount! > fetchSize {
+        if NoteHandler.shared.totalNotesCount! > NoteHandler.shared.fetchSize {
             self.spinnerFooter.startAnimating()
         }
         if NoteHandler.shared.totalNotesCount == 0 {
@@ -43,21 +43,25 @@ class NotepadViewController: UIViewController {
         let searchBarStyle = notesSearchBar.value(forKey: "searchField") as? UITextField
         searchBarStyle?.clearButtonMode = .never
         
-        getNotes(startIndex: 0, count: fetchSize)
+        getNotes(startIndex: 0)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        notesSearchBar.showsCancelButton = false
-        getNotes(startIndex: 0, count: fetchSize)
+        resetSearchState()
     }
     
-    func getNotes(startIndex: Int, count: Int) {
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        resetSearchState()
+    }
+    
+    func getNotes(startIndex: Int) {
         
         if ifSorted == false {
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Note")
             fetchRequest.fetchOffset = startIndex
-            fetchRequest.fetchLimit = count
+            fetchRequest.fetchLimit = NoteHandler.shared.fetchSize
             if let context = NoteHandler.shared.context {
                 
                 if let notepad = try? context.fetch(fetchRequest) as? [Note] {
@@ -86,7 +90,6 @@ class NotepadViewController: UIViewController {
     let timeFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm"
-        
         return dateFormatter
     }()
     
@@ -97,7 +100,6 @@ class NotepadViewController: UIViewController {
     }
     
     @IBAction func sortButton(_ sender: UIBarButtonItem) {
-        //searchBarCancelButtonClicked(notesSearchBar)
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
         alert.addAction(UIAlertAction(title: "A-Z", style: .default, handler: { (UIAlertAction)
@@ -136,16 +138,19 @@ class NotepadViewController: UIViewController {
             filteredNotes = filteredNotes.sorted{ $0.text! > $1.text! }
             notepadTableView.reloadData()
         case .newest:
-            filteredNotes = filteredNotes.sorted{ $0.date! < $1.date! }
+            filteredNotes = filteredNotes.sorted{ $0.date! > $1.date! }
             notepadTableView.reloadData()
         case .oldest:
-            filteredNotes = filteredNotes.sorted{ $0.date! > $1.date! }
+            filteredNotes = filteredNotes.sorted{ $0.date! < $1.date! }
             notepadTableView.reloadData()
         }
     }
+    
+    func stopSpinner() {
+        self.spinnerFooter.stopAnimating()
+        self.notepadTableView.tableFooterView = UIView()
+    }
 }
-
-
 
 extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
     
@@ -163,12 +168,10 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
         adjustedFrame?.origin.x += 10.0
         cell?.accessoryView?.frame = adjustedFrame!
         
-        
         if ifSorted == false, indexPath.row == filteredNotes.count - 1, NoteHandler.shared.totalNotesCount! > filteredNotes.count {
-            getNotes(startIndex: indexPath.row + 1, count: fetchSize)
+            getNotes(startIndex: indexPath.row + 1)
         } else if ifSorted == false, indexPath.row == filteredNotes.count - 1, NoteHandler.shared.totalNotesCount! <= filteredNotes.count {
-            self.spinnerFooter.stopAnimating()
-            self.notepadTableView.tableFooterView = UIView()
+            stopSpinner()
         }
         
         var noteText = note.text
@@ -200,10 +203,8 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
         
         let editAction = UITableViewRowAction(style: .normal, title: "Edit") { (rowAction, indexPath) in
             if let context = NoteHandler.shared.context {
-                
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
                 let controller = storyboard.instantiateViewController(withIdentifier: "editNoteVC") as? EditNoteViewController
-                
                 controller?.noteToEdit = self.filteredNotes[indexPath.row]
                 if controller != nil {
                     self.navigationController?.pushViewController(controller!, animated: true)
@@ -215,7 +216,6 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
         
         let deleteAction = UITableViewRowAction(style: .destructive, title: "Delete") { (rowAction, indexPath) in
             let alert = UIAlertController(title: "Delete note?", message: nil, preferredStyle: .alert)
-            
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (UIAlertAction)
                 in
@@ -230,44 +230,29 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
                 }
             }))
             self.present(alert, animated: true, completion: nil)
-            
         }
-        
         return [deleteAction, editAction]
     }
-    
-
-    
 }
 
 extension NotepadViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchText != nil && searchText != "" {
+        if searchText != "" {
             while filteredNotes.count != NoteHandler.shared.totalNotesCount {
-                self.getNotes(startIndex: self.filteredNotes.count, count: self.fetchSize)
-                
+                self.getNotes(startIndex: self.filteredNotes.count)
             }
-            
             filteredNotes = searchText.isEmpty ? notes : notes.filter { (item: Note) -> Bool in
                 print("4")
                 print(filteredNotes)
                 ifSorted = true
-                self.spinnerFooter.stopAnimating()
-                self.notepadTableView.tableFooterView = UIView()
+                stopSpinner()
                 return item.text?.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
-                
             }
             notepadTableView.reloadData()
             print("5")
             print(filteredNotes)
         } else {
-            ifSorted = false
-            notesSearchBar.text = ""
-            notesSearchBar.showsCancelButton = false
-            notesSearchBar.endEditing(true)
-            self.spinnerFooter.stopAnimating()
-            self.notepadTableView.tableFooterView = UIView()
-            getNotes(startIndex: 0, count: fetchSize)
+            resetSearchState()
         }
     }
     
@@ -278,13 +263,15 @@ extension NotepadViewController: UISearchBarDelegate {
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         print("searchBarCancelButtonClicked")
+        resetSearchState()
+    }
+    
+    func resetSearchState() {
         ifSorted = false
         notesSearchBar.text = ""
         notesSearchBar.showsCancelButton = false
         notesSearchBar.endEditing(true)
-        self.spinnerFooter.stopAnimating()
-        self.notepadTableView.tableFooterView = UIView()
-        getNotes(startIndex: 0, count: fetchSize)
-        //notesSearchBar.resignFirstResponder()
+        stopSpinner()
+        getNotes(startIndex: 0)
     }
 }
