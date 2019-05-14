@@ -20,14 +20,7 @@ class NotepadViewController: UIViewController {
     
     var notes = [Note]()
     
-    var filteredNotes = [Note]() /*{
-        didSet {
-            if let context = NoteHandler.shared.context {
-                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Note")
-                NoteHandler.shared.totalNotesCount = try? context.count(for: fetchRequest)
-            }
-        }
-    }*/
+    var filteredNotes = [Note]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,12 +75,11 @@ class NotepadViewController: UIViewController {
                 }
             }
         }
-        
     }
 
     let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
+        dateFormatter.dateFormat = "dd.MM.yy"
         return dateFormatter
     }()
     
@@ -165,6 +157,12 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
         
         let note = filteredNotes[indexPath.row]
         let cell = notepadTableView.dequeueReusableCell(withIdentifier: "noteCell", for: indexPath) as? NoteTableViewCell
+        
+        cell?.accessoryView?.frame = CGRect(x: 5, y: 5, width: 5, height: 5)
+        var adjustedFrame = cell?.accessoryView?.frame
+        adjustedFrame?.origin.x += 10.0
+        cell?.accessoryView?.frame = adjustedFrame!
+        
         
         if ifSorted == false, indexPath.row == filteredNotes.count - 1, NoteHandler.shared.totalNotesCount! > filteredNotes.count {
             getNotes(startIndex: indexPath.row + 1, count: fetchSize)
@@ -244,46 +242,38 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
 
 extension NotepadViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        while filteredNotes.count != NoteHandler.shared.totalNotesCount {
-            self.getNotes(startIndex: self.filteredNotes.count, count: self.fetchSize)
+        if searchText != nil && searchText != "" {
+            while filteredNotes.count != NoteHandler.shared.totalNotesCount {
+                self.getNotes(startIndex: self.filteredNotes.count, count: self.fetchSize)
+                
+            }
             
-        }
-        
-        filteredNotes = searchText.isEmpty ? notes : notes.filter { (item: Note) -> Bool in
-            print("4")
+            filteredNotes = searchText.isEmpty ? notes : notes.filter { (item: Note) -> Bool in
+                print("4")
+                print(filteredNotes)
+                ifSorted = true
+                self.spinnerFooter.stopAnimating()
+                self.notepadTableView.tableFooterView = UIView()
+                return item.text?.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
+                
+            }
+            notepadTableView.reloadData()
+            print("5")
             print(filteredNotes)
-            ifSorted = true
+        } else {
+            ifSorted = false
+            notesSearchBar.text = ""
+            notesSearchBar.showsCancelButton = false
+            notesSearchBar.endEditing(true)
             self.spinnerFooter.stopAnimating()
             self.notepadTableView.tableFooterView = UIView()
-            return item.text?.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
-            
+            getNotes(startIndex: 0, count: fetchSize)
         }
-        notepadTableView.reloadData()
-        print("5")
-        print(filteredNotes)
     }
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         notesSearchBar.showsCancelButton = true
         print("searchBarTextDidBeginEditing")
-    }
-    
-    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
-        print("searchBarShouldEndEditing")
-        return true
-    }
-    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        print("searchBarTextDidEndEditing")
-    }
-    
-    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-        print("searchBarSearchButtonClicked")
-        /*if !shouldShowSearchResults {
-            shouldShowSearchResults = true
-            tblSearchResults.reloadData()
-        }
-        
-        searchController.searchBar.resignFirstResponder()*/
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -295,6 +285,6 @@ extension NotepadViewController: UISearchBarDelegate {
         self.spinnerFooter.stopAnimating()
         self.notepadTableView.tableFooterView = UIView()
         getNotes(startIndex: 0, count: fetchSize)
-        notesSearchBar.resignFirstResponder()
+        //notesSearchBar.resignFirstResponder()
     }
 }

@@ -14,4 +14,8 @@ class NoteTableViewCell: UITableViewCell {
     @IBOutlet weak var noteTimeLabel: UILabel!
     @IBOutlet weak var noteDateLabel: UILabel!
     
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        self.accessoryType = UITableViewCellAccessoryType.disclosureIndicator
+    }
 }
