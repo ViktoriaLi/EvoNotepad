@@ -20,7 +20,15 @@ class NotepadViewController: UIViewController {
     
     var notes = [Note]()
     
-    var filteredNotes = [Note]()
+    var filteredNotes = [Note]() {
+        didSet {
+            if filteredNotes.count == 0 {
+                emptyTableLabel.isHidden = false
+            } else {
+                emptyTableLabel.isHidden = true
+            }
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,10 +42,9 @@ class NotepadViewController: UIViewController {
         if NoteHandler.shared.totalNotesCount! > NoteHandler.shared.fetchSize {
             self.spinnerFooter.startAnimating()
         }
-        if NoteHandler.shared.totalNotesCount == 0 {
-            emptyTableLabel.text = "No notes"
-            emptyTableLabel.isHidden = false
-        }
+        
+        emptyTableLabel.text = "Add notes by clicking the Add button"
+        
         self.notepadTableView.tableFooterView = self.spinnerFooter
         
         let searchBarStyle = notesSearchBar.value(forKey: "searchField") as? UITextField
@@ -46,6 +53,8 @@ class NotepadViewController: UIViewController {
         getNotes(startIndex: 0)
     }
 
+    
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         resetSearchState()
@@ -92,12 +101,6 @@ class NotepadViewController: UIViewController {
         dateFormatter.dateFormat = "HH:mm"
         return dateFormatter
     }()
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let newVC = segue.destination as? AddNewNoteViewController {
-            newVC.notesListVC = self
-        }
-    }
     
     @IBAction func sortButton(_ sender: UIBarButtonItem) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)

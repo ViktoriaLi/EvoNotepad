@@ -12,8 +12,6 @@ class AddNewNoteViewController: UIViewController {
 
     @IBOutlet weak var newNoteTextView: UITextView!
     
-    weak var notesListVC: NotepadViewController?
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         //newNoteTextView.selectedTextRange = newNoteTextView.textRange(from: newNoteTextView.beginningOfDocument, to: newNoteTextView.beginningOfDocument)
