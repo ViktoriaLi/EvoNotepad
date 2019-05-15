@@ -104,8 +104,6 @@ class NotepadViewController: UIViewController {
         
         alert.addAction(UIAlertAction(title: "A-Z", style: .default, handler: { (UIAlertAction)
             in
-            print("1")
-            print(self.filteredNotes)
             self.performSorting(sortType: .alphabetAscending)
         }))
         alert.addAction(UIAlertAction(title: "Z-A", style: .default, handler: { (UIAlertAction)
@@ -181,7 +179,7 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let controller = storyboard.instantiateViewController(withIdentifier: "showNoteID") as? ShowNoteViewController
-        controller?.selectedNote = filteredNotes[indexPath.row]
+        controller?.selectedNote = filteredNotes[indexPath.row].text
         if controller != nil {
             self.navigationController?.pushViewController(controller!, animated: true)
         }
@@ -208,7 +206,6 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
             alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (UIAlertAction)
                 in
                 if let context = NoteHandler.shared.context {
-                    //context.delete(self.notes[indexPath.row])
                     context.delete(self.filteredNotes[indexPath.row])
                     self.notes.remove(at: indexPath.row)
                     self.filteredNotes.remove(at: indexPath.row)
@@ -232,15 +229,11 @@ extension NotepadViewController: UISearchBarDelegate {
                 self.getNotes(startIndex: self.filteredNotes.count)
             }
             filteredNotes = searchText.isEmpty ? notes : notes.filter { (item: Note) -> Bool in
-                print("4")
-                print(filteredNotes)
                 ifSorted = true
                 stopSpinner()
                 return item.text?.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
             }
             notepadTableView.reloadData()
-            print("5")
-            print(filteredNotes)
         } else {
             resetSearchState()
         }
@@ -248,11 +241,9 @@ extension NotepadViewController: UISearchBarDelegate {
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         notesSearchBar.showsCancelButton = true
-        print("searchBarTextDidBeginEditing")
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        print("searchBarCancelButtonClicked")
         resetSearchState()
     }
     

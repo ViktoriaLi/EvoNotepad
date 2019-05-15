@@ -7,18 +7,19 @@
 //
 
 import UIKit
+import CoreData
 
 class ShowNoteViewController: UIViewController {
 
     @IBOutlet weak var noteTextLabel: UILabel!
     
-    weak var selectedNote: Note?
+    var selectedNote: String?
     var activityViewController: UIActivityViewController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         if selectedNote != nil {
-            noteTextLabel.text = selectedNote!.text
+            noteTextLabel.text = selectedNote!
         }
         self.navigationItem.setRightBarButton(UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareNote)), animated: true)
     }
