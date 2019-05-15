@@ -25,13 +25,11 @@ class ShowNoteViewController: UIViewController {
     }
     
     @objc func shareNote() {
-        DispatchQueue.main.async {
-            if self.selectedNote != nil {
-                let textToShare = [self.noteTextLabel.text!]
-                self.activityViewController = UIActivityViewController(activityItems: textToShare, applicationActivities: nil)
-                self.activityViewController?.popoverPresentationController?.sourceView = self.view
-                self.present(self.activityViewController!, animated: true, completion: nil)
-            }
+        if self.selectedNote != nil {
+            let textToShare = [self.noteTextLabel.text!]
+            self.activityViewController = UIActivityViewController(activityItems: textToShare, applicationActivities: nil)
+            self.activityViewController?.popoverPresentationController?.sourceView = self.view
+            self.present(self.activityViewController!, animated: true, completion: nil)
         }
     }
     
