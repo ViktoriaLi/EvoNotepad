@@ -14,10 +14,7 @@ class AddNewNoteViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //newNoteTextView.selectedTextRange = newNoteTextView.textRange(from: newNoteTextView.beginningOfDocument, to: newNoteTextView.beginningOfDocument)
-        //newNoteTextView.beginFloatingCursor(at: CGPoint(x: 0, y: 0))
     }
-    
     
     @IBAction func saveButtonPressed(_ sender: UIBarButtonItem) {
         if newNoteTextView.text != nil, newNoteTextView.text != "" {

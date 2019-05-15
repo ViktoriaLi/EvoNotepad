@@ -14,7 +14,6 @@ class NotepadViewController: UIViewController {
     @IBOutlet weak var notesSearchBar: UISearchBar!
     @IBOutlet weak var emptyTableLabel: UILabel!
     
-    
     var ifSorted: Bool = false
     let spinnerFooter = UIActivityIndicatorView.init(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
     
@@ -32,28 +31,21 @@ class NotepadViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        notepadTableView.delegate = self
-        notepadTableView.dataSource = self
-        notesSearchBar.delegate = self
+        setDelegates()
+        emptyTableLabel.text = "Add notes by clicking the Add button"
+        getNotes(startIndex: 0)
+    }
+    
+    override func viewDidLayoutSubviews() {
         notesSearchBar.showsCancelButton = false
-        NoteHandler.shared.appDelegate = (UIApplication.shared.delegate as! AppDelegate)
-        
         self.spinnerFooter.frame = CGRect(x: 0, y: 0, width: notepadTableView.bounds.width, height: 50)
         if NoteHandler.shared.totalNotesCount! > NoteHandler.shared.fetchSize {
             self.spinnerFooter.startAnimating()
         }
-        
-        emptyTableLabel.text = "Add notes by clicking the Add button"
-        
         self.notepadTableView.tableFooterView = self.spinnerFooter
-        
         let searchBarStyle = notesSearchBar.value(forKey: "searchField") as? UITextField
         searchBarStyle?.clearButtonMode = .never
-        
-        getNotes(startIndex: 0)
     }
-
-    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -65,14 +57,19 @@ class NotepadViewController: UIViewController {
         resetSearchState()
     }
     
+    func setDelegates() {
+        notepadTableView.delegate = self
+        notepadTableView.dataSource = self
+        notesSearchBar.delegate = self
+        NoteHandler.shared.appDelegate = (UIApplication.shared.delegate as! AppDelegate)
+    }
+    
     func getNotes(startIndex: Int) {
-        
         if ifSorted == false {
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Note")
             fetchRequest.fetchOffset = startIndex
             fetchRequest.fetchLimit = NoteHandler.shared.fetchSize
             if let context = NoteHandler.shared.context {
-                
                 if let notepad = try? context.fetch(fetchRequest) as? [Note] {
                     if notepad != nil {
                         if startIndex == 0 {
@@ -129,14 +126,9 @@ class NotepadViewController: UIViewController {
     
     func performSorting(sortType: Sorting) {
         switch sortType {
-            
         case .alphabetAscending:
             filteredNotes = filteredNotes.sorted{ $0.text! < $1.text! }
-            print("2")
-            print(filteredNotes)
             notepadTableView.reloadData()
-            print("3")
-            print(filteredNotes)
         case .alphabetDescending:
             filteredNotes = filteredNotes.sorted{ $0.text! > $1.text! }
             notepadTableView.reloadData()
@@ -162,40 +154,33 @@ extension NotepadViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let note = filteredNotes[indexPath.row]
         let cell = notepadTableView.dequeueReusableCell(withIdentifier: "noteCell", for: indexPath) as? NoteTableViewCell
         
-        cell?.accessoryView?.frame = CGRect(x: 5, y: 5, width: 5, height: 5)
-        var adjustedFrame = cell?.accessoryView?.frame
-        adjustedFrame?.origin.x += 10.0
-        cell?.accessoryView?.frame = adjustedFrame!
-        
-        if ifSorted == false, indexPath.row == filteredNotes.count - 1, NoteHandler.shared.totalNotesCount! > filteredNotes.count {
-            getNotes(startIndex: indexPath.row + 1)
-        } else if ifSorted == false, indexPath.row == filteredNotes.count - 1, NoteHandler.shared.totalNotesCount! <= filteredNotes.count {
-            stopSpinner()
+        if ifSorted == false, indexPath.row == filteredNotes.count - 1 {
+            if NoteHandler.shared.totalNotesCount! > filteredNotes.count {
+                getNotes(startIndex: indexPath.row + 1)
+            } else {
+                stopSpinner()
+            }
         }
         
         var noteText = note.text
-        
         if noteText != nil, noteText!.count > 100 {
             noteText = String(noteText!.prefix(100))
         }
-
+        
         if let creationDate = note.date {
             cell?.noteDateLabel.text = dateFormatter.string(from: creationDate)
             cell?.noteTimeLabel.text = timeFormatter.string(from: creationDate)
         }
         cell?.noteTextLabel.text = noteText
-
         return cell!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let controller = storyboard.instantiateViewController(withIdentifier: "showNoteID") as? ShowNoteViewController
-    
         controller?.selectedNote = filteredNotes[indexPath.row]
         if controller != nil {
             self.navigationController?.pushViewController(controller!, animated: true)

@@ -22,8 +22,6 @@ class EditNoteViewController: UIViewController {
         if noteToEdit != nil {
             editNoteTextView.text = noteToEdit?.text
         }
-        //let newPosition = editNoteTextView.endOfDocument
-        //editNoteTextView.selectedTextRange = editNoteTextView.textRange(from: newPosition, to: newPosition)
     }
     
     @objc func saveNoteAfterEditing() {
